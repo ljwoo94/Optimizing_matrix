@@ -1,5 +1,5 @@
 #include "matmul.h"
-#include <thread>
+#include <omp.h>
 
 void matmul_ref(const int* const matrixA, const int* const matrixB,
                 int* const matrixC, const int n) {
