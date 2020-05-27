@@ -26,7 +26,7 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
       break;
     }
   }
-
+  #pragma omp parallel for collapse(6)
    for(int i=0; i<n; i+=b)
         for(int j=0; j<n; j+=b)
             for(int k=0; k<n; k+=b)
