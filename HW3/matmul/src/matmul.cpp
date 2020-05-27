@@ -26,6 +26,7 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
       break;
     }
   }
+  omp_set_num_threads(omp_get_num_procs());
   #pragma omp parallel for
    for(int i=0; i<n; i+=b)
         for(int j=0; j<n; j+=b)
