@@ -16,7 +16,11 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
   //
   //apply Transpose by changing order. (better cache line)
   for (int i = 0; i < n; i++)
-    for (int k = 0; k < n; k++)
+    for (int k = 0; k < n; k++){
+      //for cache usage
+      int matA = matrixA[i * n + k];
       for (int j = 0; j < n; j++)
-        matrixC[i * n + j] += matrixA[i * n + k] * matrixB[k * n + j];
+        matrixC[i * n + j] += matA * matrixB[k * n + j];
+    }
+      
 }
