@@ -14,6 +14,7 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
   // TODO: Implement your code
   //apply Transpose by changing order. (better cache line)
+  omp_set_num_threads(omp_get_num_procs());
   #pragma omp parallel for
   for (int i = 0; i < n; i++)
     for (int k = 0; k < n; k++) {
