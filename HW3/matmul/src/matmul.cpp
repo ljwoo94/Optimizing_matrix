@@ -13,7 +13,7 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
   // TODO: Implement your code
 
-  int b = 52;
+  int b = 32;
   for(int i = b; i > 0; i++) {
     if(n%i == 0) {
       b = i;
