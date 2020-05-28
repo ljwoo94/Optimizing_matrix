@@ -35,7 +35,7 @@ int* const mat_sub(const int* const matrixA, const int* const matrixB, const int
 
 void matmul_transpose(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
-  //#pragma omp parallel for
+  #pragma omp parallel for
   for(int i = 0; i < n; i++) {
     for(int k = 0; k < n; k++) {
       int matA = matrixA[i*n+k];
@@ -66,6 +66,7 @@ void Strassen(const int* const matrixA, const int* const matrixB,
     int* const B22 = (int*)malloc(sizeof(int) * nn * nn);
 
     int i,j,k;
+    //#pragma omp for collapse(2)
     for(i = 0; i < nn; i++) {
       for(j = 0; j < nn; j++) {
         A11[i*nn + j] = matrixA[i * n + j];
@@ -87,37 +88,51 @@ void Strassen(const int* const matrixA, const int* const matrixB,
     int*  M6 = (int*)calloc(nn*nn, sizeof(int));
     int*  M7 = (int*)calloc(nn*nn, sizeof(int));
     
-    int *P1, *P2, *P3, *P4, *P5, *P6, *P7,*P8, *P9, *P10;
-      P1 = mat_add(A11,A22,nn);
-      P2 = mat_add(B11,B22,nn);
-      P3 = mat_add(A21,A22,nn);
-      P4 = mat_sub(B12,B22,nn);
-      P5 = mat_sub(B21,B11,nn);
-      P6 = mat_add(A11,A12,nn);
-      P7 = mat_sub(A21,A11,nn);
-      P8 = mat_add(B11,B12,nn);
-      P9 = mat_sub(A12,A22,nn);
-      P10 = mat_add(B21,B22,nn);
+    //int *P1, *P2, *P3, *P4, *P5;
+    // *P6, *P7,*P8, *P9, *P10;
 
     //need to make strassens parallel.
-    #pragma omp parallel sections
+    #pragma omp task
     {
-      #pragma omp section 
-        Strassen(P1, P2, M1, nn);
-      #pragma omp section
-        Strassen(P3, B11, M2, nn);
-      #pragma omp section
-        Strassen(A11, P4, M3, nn);
-      #pragma omp section
-       Strassen(A22, P5, M4, nn);
-      #pragma omp section
-        Strassen(P6, B22, M5, nn);
-      #pragma omp section
-        Strassen(P7, P8, M6, nn);
-      #pragma omp section
-        Strassen(P9, P10, M7, nn);
+      //P1 = mat_add(A11,A22,nn);
+      //P2 = mat_add(B11,B22,nn);
+      Strassen(mat_add(A11,A22,nn), mat_add(B11,B22,nn), M1, nn);
     }
-
+    #pragma omp task
+    {
+      //P3 = mat_add(A21,A22,nn);
+      Strassen(mat_add(A21,A22,nn), B11, M2, nn);
+    }
+    #pragma omp task
+    {
+      //P4 = mat_sub(B12,B22,nn);
+      Strassen(A11, mat_sub(B12,B22,nn), M3, nn);
+    }
+    #pragma omp task
+    {
+      //P5 = ;
+      Strassen(A22, mat_sub(B21,B11,nn), M4, nn);
+    }
+    #pragma omp task
+    {
+      //P6 = mat_add(A11,A12,nn);
+      Strassen(mat_add(A11,A12,nn), B22, M5, nn);
+    } 
+    #pragma omp task
+    {
+      //P7 = mat_sub(A21,A11,nn);
+     // P8 = mat_add(B11,B12,nn);
+      Strassen(mat_sub(A21,A11,nn), mat_add(B11,B12,nn), M6, nn);
+    }
+        
+    #pragma omp task
+    {
+      //P9 = mat_sub(A12,A22,nn);
+      //P10 = mat_add(B21,B22,nn);
+      Strassen(mat_sub(A12,A22,nn), mat_add(B21,B22,nn), M7, nn);
+    }
+    #pragma omp taskwait
+    
     int*  C11 = (int*)malloc(sizeof(int) * nn * nn); 
     int*  C12 = (int*)malloc(sizeof(int) * nn * nn); 
     int*  C21 = (int*)malloc(sizeof(int) * nn * nn); 
@@ -143,7 +158,7 @@ void Strassen(const int* const matrixA, const int* const matrixB,
       free(B11);free(B12);free(B21);free(B22);
       free(C11);free(C12);free(C21);free(C22);
       free(M1);free(M2);free(M3);free(M4);free(M5);free(M6);free(M7);
-      free(P1);free(P2);free(P3);free(P4);free(P5);free(P6);free(P7);free(P8);free(P9);free(P10);
+      //free(P1);free(P2);free(P3);free(P4);free(P5);//free(P6);free(P7);free(P8);free(P9);free(P10);
       return;
     }
   }
@@ -152,6 +167,11 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
     THREADS = omp_get_num_procs();
     omp_set_num_threads(THREADS);
-    Strassen(matrixA,matrixB,matrixC,n);
-    //printMatrix(matrixC,n);
+    #pragma omp parallel
+    {
+      #pragma omp single
+      {
+        Strassen(matrixA,matrixB,matrixC,n);
+      }
+    }
 }
