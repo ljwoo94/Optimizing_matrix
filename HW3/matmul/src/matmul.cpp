@@ -10,7 +10,6 @@ void matmul_ref(const int* const matrixA, const int* const matrixB,
     for (int j = 0; j < n; j++)
       for (int k = 0; k < n; k++)
         matrixC[i * n + j] += matrixA[i * n + k] * matrixB[k * n + j];
- // printMatrix(matrixC,n);
 }
 
 int* const mat_add(const int* const matrixA, const int* const matrixB, const int n) {
@@ -35,7 +34,7 @@ int* const mat_sub(const int* const matrixA, const int* const matrixB, const int
 
 void matmul_transpose(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
-  //#pragma omp parallel for
+  #pragma omp parallel for
   for(int i = 0; i < n; i++) {
     for(int k = 0; k < n; k++) {
       int matA = matrixA[i*n+k];
@@ -138,11 +137,69 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
     THREADS = 16;//omp_get_num_procs();
     omp_set_num_threads(THREADS);
+    
+    //no need to use strassen algorithm
+    if(n <= 128) {
+      matmul_transpose(matrixA,matrixB,matrixC,n);
+      return;
+    }
+
+    //max = 8192, min = 64
+    if(n == 256 || n == 512 || n == 1024 
+      || n == 2048 || n == 4096 || n == 8192) {
+        #pragma omp parallel
+        {
+          #pragma omp single
+          { 
+            Strassen(matrixA,matrixB,matrixC,n);
+          }
+        }
+        return;
+    }
+    
+    //if n is not an exponential of 2, we must apply padding
+    //so matrix can fit into size of exponential of 2's
+    int given = n;
+    int pad = 1;
+    while(given >= 128) {
+      //when odd number
+      if(given & 1)
+        given++;
+      pad <<= 1;
+      given >>= 1;
+    }
+    given *= pad;
+
+    int* matA_padding = (int*)calloc(given*given, sizeof(int));
+    int* matB_padding = (int*)calloc(given*given, sizeof(int));
+    int* matC_padding = (int*)calloc(given*given, sizeof(int));
+
+    //else 0
+    #pragma omp parallel for collapse(2)
+    for(int x = 0; x < n; x++) {
+      for(int y = 0; y < n; y++) {
+        matA_padding[x*given+y] = matrixA[x*n+y];
+        matB_padding[x*given+y] = matrixB[x*n+y];
+        matC_padding[x*given+y] = matrixC[x*n+y];
+      }
+    }
+
     #pragma omp parallel
     {
       #pragma omp single
-      {
-        Strassen(matrixA,matrixB,matrixC,n);
+      { 
+        Strassen(matA_padding,matB_padding,matC_padding,n);
       }
     }
+
+    #pragma omp parallel for collapse(2)
+    for(int x = 0; x < n; x++) {
+      for(int y = 0; y < n; y++) {
+        matrixC[x*n+y] = matC_padding[x*given+y];
+      }
+    }
+
+    free(matA_padding);
+    free(matB_padding);
+    free(matC_padding);
 }
