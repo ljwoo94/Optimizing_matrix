@@ -13,8 +13,8 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
   // TODO: Implement your code
 
-  //
   //apply Transpose by changing order. (better cache line)
+  
   for (int i = 0; i < n; i++)
     for (int k = 0; k < n; k++)
       for (int j = 0; j < n; j++)
