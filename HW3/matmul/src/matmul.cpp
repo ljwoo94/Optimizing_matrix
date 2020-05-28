@@ -19,7 +19,7 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
   //L1d can hold 8192 ints.
   //cache line = 64 bit = 8 B => 2 consecutive ints
   //about 52x52 matrix = 1 L1cache without capacity miss
-  int b = 52;
+  int b = 32;
   for(int i = b; i > 0; i++) {
     if(n%i == 0) {
       b = i;
