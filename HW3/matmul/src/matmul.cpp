@@ -61,8 +61,8 @@ void Strassen(const int* const matrixA, const int* const matrixB,
                       int* const matrixC, const int n) {
 
   //apply Strassen Algorithm
-  //threashold of cache = 32;
-  if(n <= 8) {
+  //threashold of cache = 128;
+  if(n <= 128) {
       matmul_transpose(matrixA, matrixB, matrixC, n);
       return;
   } else {
@@ -122,13 +122,6 @@ void Strassen(const int* const matrixA, const int* const matrixB,
     C21[i] = M2[i] + M4[i];
     C22[i] = M1[i] - M2[i] + M3[i] + M6[i];
   }
-
-  // C11 = mat_add(mat_sub(mat_add(M1,M4,nn), M5,nn),M7,nn);
-  // C12 = mat_add(M3,M5,nn);
-  // C21 = mat_add(M2,M4,nn);
-  // C22 = mat_add(mat_add(mat_sub(M1,M2,nn), M3,nn),M6,nn);
-
-
     //merge C
     for(i = 0; i < nn; i++) {
       for(j = 0; j < nn; j++) {
