@@ -32,7 +32,7 @@ void matmul_optimized(const int* const matrixA, const int* const matrixB,
         for(int j=0; j<n; j+=b)
             for(int k=0; k<n; k+=b) {
 
-              #pragma omp parallel for
+              //#pragma omp parallel for
                for(int ii=0; ii<b; ii++)
                     for(int jj=0; jj<b; jj++)
                         for(int kk=0; kk<b; kk++)
