@@ -1,0 +1,19 @@
+[INFO] Arguments will be as following: 
+    INPUT_PATH: test_batch.bin
+    DATA_OFFSET: 0
+    BATCH: 1
+    IMG_PATH_TEMPLATE: tmp/cifar10_test_%d_%s.bmp
+    PARAMETER_PATH: values.txt
+[INFO] Initialize variables
+[INFO] Allocate memories
+[INFO] Read image from data_offset 0 at test_batch.bin
+[INFO] Save image to tmp/cifar10_test_0_cat.bmp
+[INFO] CPU  elapsed time is 23.3871 msec
+[INFO] CUDA elapsed time is 0.191264 msec
+[INFO] CUDA predict is as following:
+CPU:CLASS(NUMBER,T/F),CUDA:CLASS(NUMBER,T/F),Label:CLASS(NUMBER)
+CPU:        cat(3,1), CUDA:        cat(3,1), Label:        cat(3)
+
+Correct
+
+CPU error:0% GPU error:0%
