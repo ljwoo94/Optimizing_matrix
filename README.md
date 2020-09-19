@@ -1,6 +1,7 @@
-# MGP_2020
-*2020-1 Multicore and GPU Yonsei*
+# Multicore and GPU Programming HW3
 
-Each Project will be seperated into different repository.
+## Summary
 
-After all the arrangement is finished, this repository will be deleted.
+CSI4119, Yonsei University 20201
+
+- [HW3 Specification](https://docs.google.com/document/d/1j_0XSWhXnfmM-YwNsCuYPx5cXOpv121iUiIhLXRJa6c/edit?usp=sharing)
