@@ -8,19 +8,19 @@
 
 The technique that uses ikj index in matrix multiplication cannot reduce time complexity. However, the change of steps of calculation can reduce cache miss that actually decreases runtime.
 
-![ikj.jpg](images/ikj.jpg)
+![ikj.jpg](images/ikj.JPG)
 
 ### 1-2 Block Matrix Multiplication
 
 The block matrix multiplication also decreases cache miss by reducing the size of matrix that is multiplied at each time. It applies divide and conquer algorithm to optimize calculation into cache size.
 
-![block.jpg](images/block.jpg)
+![block.jpg](images/block.JPG)
 
 ### 1-3 Strassen Algorithm
 
 Strassen Algorithm is also one of divide and conquer algorithm. Unlike other techniques, Strassen algorithm reduces time complexity from O(n3) to O(n2.807). Although the difference of number can be considered as tiny number, the performance extremely improves when the dataset is large.
 
-![Strassen.jpg](images/Strassen.jpg)
+![Strassen.jpg](images/Strassen.JPG)
 
 In the first step, 7 multiplication and 10 addition/subtractions are used to calculate M values. These M values will be used to calculate final values with only 8 additions/subtractions.
 
