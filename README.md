@@ -74,7 +74,7 @@ Correct
 
 ### 3-1 Actual Result that apply ikj, Strassen and OMP
 
-![result.jpg](images/result.jpg)
+![result.jpg](images/result.JPG)
 
 
 
